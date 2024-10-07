@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { agregarProducto } from '../actions/zapatos_actions';
 
 const InventarioForm = ({ actualizarProductos }) => {
     const [nuevoProducto, setNuevoProducto] = useState({
@@ -19,7 +19,7 @@ const InventarioForm = ({ actualizarProductos }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/api/Inventario/', nuevoProducto);
+            await agregarProducto(nuevoProducto);
             setNuevoProducto({
                 nombre_producto: '',
                 stock: '',

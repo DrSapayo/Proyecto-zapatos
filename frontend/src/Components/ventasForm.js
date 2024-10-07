@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { recuperarInventario, agregarVenta } from '../actions/zapatos_actions';
 
 function VentasForm() {
   const [inventario, setInventario] = useState([]);
@@ -10,32 +10,33 @@ function VentasForm() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/Inventario/')
-      .then((response) => {
-        setInventario(response.data);
-      })
-      .catch((error) => {
+    const cargarInventario = async () => {
+      try {
+        const data = await recuperarInventario();
+        setInventario(data);
+      } catch (error) {
         console.error("Error al cargar el inventario:", error);
-      });
+      }
+    };
+    cargarInventario();
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const nuevaVenta = {
       inventario: productoId,
       stock_egreso: parseInt(stockEgreso),
       fecha_venta: fechaVenta,
     };
-    axios.post('http://localhost:8000/api/SistemaVentas/', nuevaVenta)
-      .then((response) => {
-        console.log("Venta registrada:", response.data);
-      })
-      .catch((error) => {
-        if(error.response && error.response.status === 500){
-          alert("No hay stock suficiente");
-        }
-        console.error("Error al registrar la venta:", error);
-      });
+    try{
+      const ventaRegistrada = await agregarVenta(nuevaVenta);
+      console.log("Venta registrada con exito", ventaRegistrada)
+    }catch(error){
+      if(error.response && error.response.status === 500){
+        alert("No hay stock disponible")
+      }
+      console.error("Error al registrar la venta: ", error);
+    }
   };
 
   return (

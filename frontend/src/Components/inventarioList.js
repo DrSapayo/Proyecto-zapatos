@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { recuperarInventario } from '../actions/zapatos_actions';
 
 const InventarioList = () => {
     const [productos, setProductos] = useState([]);
@@ -10,8 +10,8 @@ const InventarioList = () => {
 
     const obtenerProductos = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/Inventario/');
-            setProductos(response.data);
+            const data = await recuperarInventario();
+            setProductos(data);
         } catch (error) {
             console.error('Error al obtener los productos', error);
         }
